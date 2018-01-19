@@ -1,0 +1,30 @@
+<h3>Ma Todo-list</h3>
+
+<div id="todos" class="table">
+    {{#each todos}}
+        <div class="table-row" key="{{@key}}">
+            {{this}} - 
+            <a style="color: black; text-decoration: none;" href="/todo/delete/{{@key}}">
+                <span class="ico-delete">✘</span>
+            </a>
+        </div>
+    {{/each}}
+</div>
+
+<script>
+    // Initializing the socket listening for any addition in "you-know-which-array-I-mean"
+    // Listening will focus only on the /todo/add/ namespace to prevent every page to receive some useless events
+    var socket_add = io('/todo/add/');
+    socket_add.on('todo_added', function(todo, index) {
+        // Adding our new todo in the list, yeah the aim of that amazing project
+        $('#todos').append('<div class="table-row" key="'+index+'">'+todo+' - <a style="color: black; text-decoration: none;" href="/todo/delete/'+index+'"><span class="ico-delete">✘</span></a></div>')
+    })
+
+    // Initializing the socket listening for any deletion in "you-know-which-array-I-mean"
+    // Listening will focus only on the /todo/delete/ namespace to prevent every page to receive some useless events, yeah that's a copy/paste comment
+    var socket_del = io('/todo/delete/');
+    socket_del.on('todo_deleted', function(index) {
+        // Removing the todo object from the list, see ya TODO
+        $("[key="+index+"]").remove();
+    })
+</script>
